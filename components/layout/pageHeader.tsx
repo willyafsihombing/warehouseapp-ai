@@ -1,7 +1,7 @@
 // src/components/layout/PageHeader.tsx
 // Server Component — tidak perlu 'use client'
 
-import { typography } from '@/src/app/lib/typography'
+import { typography } from '@/lib/typography'
 
 interface PageHeaderProps {
   title: string

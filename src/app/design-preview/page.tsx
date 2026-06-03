@@ -16,7 +16,7 @@ import PageContainer from '@/components/layout/pageContainer'
 import PageHeader from '@/components/layout/pageHeader'
 import StatCard from '@/components/dashboard/StatCard'
 import PriorityBadge from '@/components/dashboard/PriorityBadge'
-import { typography } from '@/src/app/lib/typography'
+import { typography } from '@/lib/typography'
 import { Package, AlertTriangle, Warehouse, TrendingUp } from 'lucide-react'
 
 // ── Helper komponen lokal ─────────────────────────────────────────────────────

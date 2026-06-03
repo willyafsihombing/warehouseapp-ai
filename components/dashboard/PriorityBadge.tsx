@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge'
-import { cn } from "@/src/app/lib/supabase/utils"
+import { cn } from "@/lib/supabase/utils"
 
 type Priority = 'critical' | 'high' | 'medium' | 'low'
 

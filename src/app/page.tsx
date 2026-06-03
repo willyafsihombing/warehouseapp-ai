@@ -3,7 +3,7 @@
 // Pengguna tidak akan pernah melihat halaman ini
 
 import { redirect } from 'next/navigation'
-import { createClient } from '@/src/app/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function RootPage() {
   const supabase = await createClient()

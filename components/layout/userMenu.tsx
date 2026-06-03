@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createClient } from '@/src/app/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 interface UserMenuProps {
   user: {

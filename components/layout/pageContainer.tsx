@@ -1,4 +1,4 @@
-import { cn } from "@/src/app/lib/supabase/utils"
+import { cn } from "@/lib/supabase/utils"
 
 interface PageContainerProps {
   children: React.ReactNode

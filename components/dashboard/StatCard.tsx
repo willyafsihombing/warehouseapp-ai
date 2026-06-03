@@ -2,8 +2,8 @@
 // Server Component — tidak perlu 'use client'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { typography } from '@/src/app/lib/typography'
-import { cn } from "@/src/app/lib/supabase/utils"
+import { typography } from '@/lib/typography'
+import { cn } from "@/lib/supabase/utils"
 
 interface TrendProps {
   value: number

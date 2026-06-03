@@ -4,7 +4,7 @@
 // jadi session yang tersimpan di cookie
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/src/app/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   const { searchParams, origin } = new URL(req.url)

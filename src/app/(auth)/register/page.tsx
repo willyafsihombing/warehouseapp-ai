@@ -6,9 +6,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/src/app/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
-// ── Tipe untuk error per field ────────────────────────────────────────────────
 type FieldErrors = {
   fullName?: string
   email?: string
@@ -16,7 +15,6 @@ type FieldErrors = {
   confirmPassword?: string
 }
 
-// ── Validasi client-side sebelum hit Supabase ─────────────────────────────────
 function validate(fullName: string, email: string, password: string, confirmPassword: string): FieldErrors {
   const errors: FieldErrors = {}
 
@@ -41,14 +39,11 @@ function validate(fullName: string, email: string, password: string, confirmPass
   return errors
 }
 
-// ── Mapping error Supabase ke pesan Indonesia ─────────────────────────────────
 function parseSupabaseError(message: string): string {
   if (message.toLowerCase().includes('user already registered'))
     return 'Email ini sudah terdaftar. Silakan login.'
   return 'Terjadi kesalahan. Silakan coba lagi.'
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -67,7 +62,6 @@ export default function RegisterPage() {
   const handleSubmit = async () => {
     setServerError(null)
 
-    // Validasi dulu di client sebelum kirim ke Supabase
     const errors = validate(fullName, email, password, confirmPassword)
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
@@ -81,7 +75,7 @@ export default function RegisterPage() {
         email,
         password,
         options: {
-          data: { full_name: fullName }, // disimpan ke user metadata
+          data: { full_name: fullName },
         },
       })
 
@@ -90,7 +84,9 @@ export default function RegisterPage() {
         return
       }
 
-      // Sukses — tampilkan pesan lalu redirect ke login setelah 2 detik
+      // Paksa signOut agar middleware tidak redirect ke /dashboard
+      await supabase.auth.signOut()
+
       setSuccess(true)
       setTimeout(() => router.push('/login'), 2000)
 
@@ -100,17 +96,17 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="w-full rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
 
       {/* Header */}
-      <div className="mb-6 space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Buat Akun Baru</h1>
-        <p className="text-sm text-muted-foreground">Mulai kelola gudang dengan AI</p>
+      <div className="mb-8 space-y-1.5">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Buat Akun Baru</h1>
+        <p className="text-base text-muted-foreground">Mulai kelola gudang dengan AI</p>
       </div>
 
       {/* Server error alert */}
       {serverError && (
-        <div className="mb-4 flex gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+        <div className="mb-6 flex gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="mt-0.5 h-4 w-4 shrink-0 text-red-500">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
@@ -120,27 +116,27 @@ export default function RegisterPage() {
 
       {/* Success alert */}
       {success && (
-        <div className="mb-4 flex gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
+        <div className="mb-6 flex gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="mt-0.5 h-4 w-4 shrink-0 text-green-600">
             <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
           </svg>
-          <p className="text-sm text-green-700">Akun berhasil dibuat! Silakan login.</p>
+          <p className="text-sm text-green-700">Akun berhasil dibuat! Mengarahkan ke halaman login...</p>
         </div>
       )}
 
       {/* Form */}
-      <div className="space-y-4">
+      <div className="space-y-5">
 
         {/* Full name */}
-        <div className="space-y-1.5">
-          <Label htmlFor="fullName">Nama Lengkap</Label>
+        <div className="space-y-2">
+          <Label htmlFor="fullName" className="text-sm font-medium">Nama Lengkap</Label>
           <Input
             id="fullName"
             placeholder="Contoh: Budi Santoso"
             value={fullName}
             onChange={e => setFullName(e.target.value)}
             disabled={loading || success}
-            className={fieldErrors.fullName ? 'border-red-400 focus-visible:ring-red-300' : ''}
+            className={`h-12 text-base ${fieldErrors.fullName ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
           />
           {fieldErrors.fullName && (
             <p className="text-xs text-red-500">{fieldErrors.fullName}</p>
@@ -148,8 +144,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Email */}
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">Email</Label>
           <Input
             id="email"
             type="email"
@@ -157,7 +153,7 @@ export default function RegisterPage() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             disabled={loading || success}
-            className={fieldErrors.email ? 'border-red-400 focus-visible:ring-red-300' : ''}
+            className={`h-12 text-base ${fieldErrors.email ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
           />
           {fieldErrors.email && (
             <p className="text-xs text-red-500">{fieldErrors.email}</p>
@@ -165,8 +161,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Password */}
-        <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-sm font-medium">Password</Label>
           <Input
             id="password"
             type="password"
@@ -174,7 +170,7 @@ export default function RegisterPage() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             disabled={loading || success}
-            className={fieldErrors.password ? 'border-red-400 focus-visible:ring-red-300' : ''}
+            className={`h-12 text-base ${fieldErrors.password ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
           />
           {fieldErrors.password && (
             <p className="text-xs text-red-500">{fieldErrors.password}</p>
@@ -182,8 +178,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Confirm password */}
-        <div className="space-y-1.5">
-          <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword" className="text-sm font-medium">Konfirmasi Password</Label>
           <Input
             id="confirmPassword"
             type="password"
@@ -192,16 +188,16 @@ export default function RegisterPage() {
             onChange={e => setConfirmPassword(e.target.value)}
             disabled={loading || success}
             onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
-            className={fieldErrors.confirmPassword ? 'border-red-400 focus-visible:ring-red-300' : ''}
+            className={`h-12 text-base ${fieldErrors.confirmPassword ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
           />
           {fieldErrors.confirmPassword && (
             <p className="text-xs text-red-500">{fieldErrors.confirmPassword}</p>
           )}
         </div>
 
-        {/* Submit button */}
+        {/* Submit */}
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-full h-12 text-base bg-blue-600 hover:bg-blue-700 text-white mt-2"
           onClick={handleSubmit}
           disabled={loading || success}
         >
@@ -219,7 +215,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Link ke login */}
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="mt-8 text-center text-sm text-muted-foreground">
         Sudah punya akun?{' '}
         <Link href="/login" className="font-medium text-blue-600 hover:underline">
           Login di sini
