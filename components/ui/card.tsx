@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/app/lib/supabase/utils"
 
 function Card({
   className,

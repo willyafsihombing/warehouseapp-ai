@@ -54,6 +54,7 @@ export type Product = {
   sku: string;
   category: string | null;
   price: number | null;
+  min_category: number | null;
   created_at: string;
 };
 
